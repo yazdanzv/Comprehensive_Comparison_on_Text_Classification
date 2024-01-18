@@ -110,11 +110,7 @@ class PreProcess:
 
         # Train set
         temp = []
-        print("TRAIN")
-        count = 0
         for data in X_train:
-            count += 1
-            print(count)
             # Case folding
             data = PreProcess.case_folding(copy.deepcopy(data[0]))
             # Special characters remover
@@ -133,11 +129,7 @@ class PreProcess:
 
         # Test set
         temp = []
-        print('TEST')
-        count = 0
         for data in X_test:
-            count += 1
-            print(count)
             # Case folding
             data = PreProcess.case_folding(copy.deepcopy(data[0]))
             # Special characters remover
