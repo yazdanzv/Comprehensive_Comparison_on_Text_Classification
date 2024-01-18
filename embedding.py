@@ -18,4 +18,3 @@ class Embedding:
         model = Word2Vec(self.X_train, vector_size=100, window=5, min_count=1, workers=4)
         train_vectors = [[Embedding.get_word_vector(word, model) for word in sentence] for sentence in self.X_train]
         test_vectors = [[Embedding.get_word_vector(word, model) for word in sentence] for sentence in self.X_test]
-    
