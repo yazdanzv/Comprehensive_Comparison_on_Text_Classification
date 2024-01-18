@@ -151,7 +151,3 @@ class PreProcess:
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
-
-a = PreProcess()
-a.preprocess()
-print(len(a.y_train))
