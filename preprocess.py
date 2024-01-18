@@ -55,7 +55,7 @@ class PreProcess:
         for file in range(len(files_test_pos)):
             with open(TEST_FILEPATH_POS + "/" + str(files_test_pos[file]), 'r') as f:
                 X_test.append(f.readlines())
-                y_train.append(1)  # 1 is the labels of positive reviews
+                y_test.append(1)  # 1 is the labels of positive reviews
 
         # Negative labels files
         files_test_neg = list(os.walk(TEST_FILEPATH_NEG))[0][-1]
@@ -151,3 +151,7 @@ class PreProcess:
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
+
+a = PreProcess()
+a.preprocess()
+print(len(a.y_train))
