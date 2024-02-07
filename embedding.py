@@ -49,15 +49,18 @@ class Embedding:
 
     @staticmethod
     def tfidf_weighted_document_embedding(word_embeddings, tfidf_weights):
-        # Checks that word embeddings & TFIDF weights are not empty
-        if not all(word_embeddings) or not all(tfidf_weights):
-            raise ValueError("Word embeddings and TF-IDF weights lists cannot be empty.")
+        # (Optional) to make program more robust
 
-        # Checks that the length of them are equal
-        if len(word_embeddings) != len(tfidf_weights):
-            raise ValueError("The lengths of word embeddings and TF-IDF weights lists must be the same.")
+        # # Checks that word embeddings & TFIDF weights are not empty
+        # if len(word_embeddings) == 0 or len(tfidf_weights) == 0:
+        #     raise ValueError("Word embeddings and TF-IDF weights lists cannot be empty.")
 
-        # Initialize the first numpy array os weighted embeddings
+        # # Checks that the length of them are equal
+        # if len(word_embeddings) != len(tfidf_weights):
+        #     raise ValueError("The lengths of word embeddings and TF-IDF weights lists must be the same.")
+
+
+        # Initialize the first numpy array as weighted embeddings
         weighted_embeddings = np.zeros(len(word_embeddings[0]))
         total_weight = 0
 
