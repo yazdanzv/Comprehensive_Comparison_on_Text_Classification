@@ -1,5 +1,8 @@
 from gensim.models import Word2Vec, FastText
 import numpy as np
+import gensim.downloader as api
+glove_model = api.load('glove-wiki-gigaword-100')
+
 
 
 class Embedding:
