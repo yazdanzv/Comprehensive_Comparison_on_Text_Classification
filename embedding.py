@@ -1,8 +1,6 @@
 from gensim.models import Word2Vec, FastText
 import numpy as np
 import gensim.downloader as api
-glove_model = api.load('glove-wiki-gigaword-100')
-
 
 
 class Embedding:
@@ -31,10 +29,45 @@ class Embedding:
         return train_vectors, test_vectors
 
     def glove(self):
-        pass
+        glove_model = api.load('glove-wiki-gigaword-100')
+        train_vectors = [glove_model[token] for token in self.X_train if token in glove_model.key_to_index]
+        test_vectors = [glove_model[token] for token in self.X_test if token in glove_model.key_to_index]
+        return train_vectors, test_vectors
 
     def fasttext(self):
         model = FastText(self.X_train, vector_size=100, window=3, min_count=1, workers=4, sg=1)
         train_vectors = [Embedding.tokens_to_vectors(sentence, model) for sentence in self.X_train]
         test_vectors = [Embedding.tokens_to_vectors(sentence, model) for sentence in self.X_test]
         return train_vectors, test_vectors
+
+    @staticmethod
+    def tfidf_weighted_document_embedding(word_embeddings, tfidf_weights):
+        # Checks that word embeddings & TFIDF weights are not empty
+        if not word_embeddings or not tfidf_weights:
+            raise ValueError("Word embeddings and TF-IDF weights lists cannot be empty.")
+
+        # Checks that the length of them are equal
+        if len(word_embeddings) != len(tfidf_weights):
+            raise ValueError("The lengths of word embeddings and TF-IDF weights lists must be the same.")
+
+        # Initialize the first numpy array os weighted embeddings
+        weighted_embeddings = np.zeros(len(word_embeddings[0]))
+        total_weight = 0
+
+        # Make weighted embeddings
+        for embedding, weight in zip(word_embeddings, tfidf_weights):
+            weighted_embeddings += embedding * weight
+            total_weight += weight
+
+        # Normalize the weights
+        if total_weight != 0:
+            weighted_embeddings /= total_weight
+
+        return weighted_embeddings
+
+    def document_embedding(self, word_embeddings, tfidf_weights):
+        document_embedding = self.tfidf_weighted_document_embedding(word_embeddings, tfidf_weights)
+        return document_embedding
+
+
+
