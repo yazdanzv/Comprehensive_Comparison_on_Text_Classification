@@ -9,9 +9,16 @@ class Embedding:
         self.X_test = X_test
 
     @staticmethod
-    def get_word_vector(word, model):  # For Word2Vec embedding (According to documentation)
+    def get_word_embedding(word, model):  # For Word2Vec embedding (According to documentation)
         try:
             return model.wv[word]
+        except KeyError:  # Word not in the model
+            return np.zeros(model.vector_size)  # Return a zero vector
+
+    @staticmethod
+    def get_word_embedding_glove(word, model):  # For GloVe embedding (According to documentation)
+        try:
+            return model[word]
         except KeyError:  # Word not in the model
             return np.zeros(model.vector_size)  # Return a zero vector
 
@@ -24,14 +31,14 @@ class Embedding:
 
     def word2vec(self):
         model = Word2Vec(self.X_train, vector_size=100, window=5, min_count=1, workers=4)
-        train_vectors = [[Embedding.get_word_vector(word, model) for word in sentence] for sentence in self.X_train]
-        test_vectors = [[Embedding.get_word_vector(word, model) for word in sentence] for sentence in self.X_test]
+        train_vectors = [[Embedding.get_word_embedding(word, model) for word in sentence] for sentence in self.X_train]
+        test_vectors = [[Embedding.get_word_embedding(word, model) for word in sentence] for sentence in self.X_test]
         return train_vectors, test_vectors
 
     def glove(self):
         glove_model = api.load('glove-wiki-gigaword-100')
-        train_vectors = [Embedding.tokens_to_vectors(sentence, glove_model) for sentence in self.X_train]
-        test_vectors = [Embedding.tokens_to_vectors(sentence, glove_model) for sentence in self.X_test]
+        train_vectors = [[Embedding.get_word_embedding_glove(word, glove_model) for word in sentence] for sentence in self.X_train]
+        test_vectors = [[Embedding.get_word_embedding_glove(word, glove_model) for word in sentence] for sentence in self.X_test]
         return train_vectors, test_vectors
 
     def fasttext(self):
@@ -43,7 +50,7 @@ class Embedding:
     @staticmethod
     def tfidf_weighted_document_embedding(word_embeddings, tfidf_weights):
         # Checks that word embeddings & TFIDF weights are not empty
-        if not word_embeddings or not tfidf_weights:
+        if not all(word_embeddings) or not all(tfidf_weights):
             raise ValueError("Word embeddings and TF-IDF weights lists cannot be empty.")
 
         # Checks that the length of them are equal
@@ -68,6 +75,3 @@ class Embedding:
     def document_embedding(self, word_embeddings, tfidf_weights):
         document_embedding = self.tfidf_weighted_document_embedding(word_embeddings, tfidf_weights)
         return document_embedding
-
-
-
