@@ -30,8 +30,8 @@ class Embedding:
 
     def glove(self):
         glove_model = api.load('glove-wiki-gigaword-100')
-        train_vectors = [glove_model[token] for token in self.X_train if token in glove_model.key_to_index]
-        test_vectors = [glove_model[token] for token in self.X_test if token in glove_model.key_to_index]
+        train_vectors = [Embedding.tokens_to_vectors(sentence, glove_model) for sentence in self.X_train]
+        test_vectors = [Embedding.tokens_to_vectors(sentence, glove_model) for sentence in self.X_test]
         return train_vectors, test_vectors
 
     def fasttext(self):
