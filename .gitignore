@@ -17,6 +17,7 @@ eggs/
 Dataset/
 *.zip
 .env/
+*.docx
 .idea/
 lib/
 lib64/
