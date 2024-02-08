@@ -1,6 +1,7 @@
 from gensim.models import Word2Vec, FastText
 import numpy as np
 import gensim.downloader as api
+import copy
 
 
 class Embedding:
@@ -42,9 +43,9 @@ class Embedding:
         return train_vectors, test_vectors
 
     def fasttext(self):
-        model = FastText(self.X_train, vector_size=100, window=3, min_count=1, workers=4, sg=1)
-        train_vectors = [Embedding.tokens_to_vectors(sentence, model) for sentence in self.X_train]
-        test_vectors = [Embedding.tokens_to_vectors(sentence, model) for sentence in self.X_test]
+        model = FastText(self.X_train, vector_size=100, window=5, min_count=1, workers=4, sg=4)
+        train_vectors = [[Embedding.tokens_to_vectors(word, model) for word in sentence] for sentence in self.X_train]
+        test_vectors = [[Embedding.tokens_to_vectors(word, model) for word in sentence] for sentence in self.X_test]
         return train_vectors, test_vectors
 
     @staticmethod
@@ -61,20 +62,14 @@ class Embedding:
 
 
         # Initialize the first numpy array as weighted embeddings
-        weighted_embeddings = np.zeros(len(word_embeddings[0]))
+        document_embeddings = []
+        weighted_embeddings = np.zeros(len(word_embeddings[0][0]))
         total_weight = 0
 
         # Make weighted embeddings
-        for embedding, weight in zip(word_embeddings, tfidf_weights):
-            weighted_embeddings += embedding * float(weight)
-            total_weight += float(weight)
+        for doc_e, doc_w in zip(word_embeddings, tfidf_weights):
+            for embedding, weight in zip(doc_e, doc_w):
+                weighted_embeddings += embedding * float(weight)
+            document_embeddings.append(copy.deepcopy(weighted_embeddings))
 
-        # Normalize the weights
-        if total_weight != 0:
-            weighted_embeddings /= total_weight
-
-        return weighted_embeddings
-
-    def document_embedding(self, word_embeddings, tfidf_weights):
-        document_embedding = self.tfidf_weighted_document_embedding(word_embeddings, tfidf_weights)
-        return document_embedding
+        return document_embeddings
