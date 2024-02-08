@@ -66,8 +66,8 @@ class Embedding:
 
         # Make weighted embeddings
         for embedding, weight in zip(word_embeddings, tfidf_weights):
-            weighted_embeddings += embedding * weight
-            total_weight += weight
+            weighted_embeddings += embedding * float(weight)
+            total_weight += float(weight)
 
         # Normalize the weights
         if total_weight != 0:
